@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class Skill : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    protected Transform SeekClosestEnemy()
     {
-        
-    }
+        List<Enemy> enemies = CharacterManager.Instance.enemies;
+        Transform closestEnemy = null;
+        float closestDistance = Mathf.Infinity;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        for (int i = 0; i < enemies.Count; ++i)
+        {
+            float currentDistance = Vector2.Distance(transform.position, enemies[i].transform.position);
+
+            if (currentDistance < closestDistance)
+            {
+                closestDistance = currentDistance;
+                closestEnemy = enemies[i].transform;
+            }
+        }
+
+        return closestEnemy;
     }
 }

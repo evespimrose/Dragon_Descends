@@ -41,6 +41,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Map
+    uniqueID: 439368281
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
@@ -55,4 +58,7 @@ TagManager:
     locked: 0
   - name: Enemy
     uniqueID: 2279462163
+    locked: 0
+  - name: UI
+    uniqueID: 1285065347
     locked: 0
