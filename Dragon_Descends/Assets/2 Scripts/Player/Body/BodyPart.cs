@@ -6,7 +6,7 @@ public class BodyPart : MonoBehaviour
 {
     public GameObject prevBodyPart;
     private Rigidbody2D rb;
-    private DistanceJoint2D Joint;
+    private HingeJoint2D Joint;
 
     private void Awake()
     {
@@ -18,10 +18,10 @@ public class BodyPart : MonoBehaviour
         }
         rb.gravityScale = 0;
 
-        Joint = GetComponent<DistanceJoint2D>();
+        Joint = GetComponent<HingeJoint2D>();
         if (Joint == null)
         {
-            Joint = gameObject.AddComponent<DistanceJoint2D>();
+            Joint = gameObject.AddComponent<HingeJoint2D>();
         }
 
         
@@ -40,18 +40,8 @@ public class BodyPart : MonoBehaviour
         {
             Joint.connectedBody = prevBodyPart.GetComponent<Rigidbody2D>();
 
-            Joint.distance = 0.5f;
         }
         else
-        {
-            Joint.connectedBody = CharacterManager.Instance.player.GetComponent<Rigidbody2D>();
-            Joint.distance = 0.5f;
-        }
-    }
-
-    private void Update()
-    {
-        if (prevBodyPart == null)
         {
             Joint.connectedBody = CharacterManager.Instance.player.GetComponent<Rigidbody2D>();
         }
