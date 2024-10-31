@@ -9,4 +9,10 @@ public class Tail : BodyPart
     {
         transform.up = prevBodyPart.transform.position - transform.position;
     }
+
+    public void ChangeChaseBodyPart(GameObject bp)
+    {
+        prevBodyPart = bp;
+        SetupJoint();
+    }
 }

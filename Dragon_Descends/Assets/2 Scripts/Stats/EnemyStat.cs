@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class EnemyStat : Stat
 {
-
+    public int dropExp;
 }

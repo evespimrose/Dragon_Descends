@@ -6,7 +6,7 @@ public class BodyPart : MonoBehaviour
 {
     public GameObject prevBodyPart;
     private Rigidbody2D rb;
-    private HingeJoint2D Joint;
+    private DistanceJoint2D Joint;
 
     private void Awake()
     {
@@ -18,10 +18,10 @@ public class BodyPart : MonoBehaviour
         }
         rb.gravityScale = 0;
 
-        Joint = GetComponent<HingeJoint2D>();
+        Joint = GetComponent<DistanceJoint2D>();
         if (Joint == null)
         {
-            Joint = gameObject.AddComponent<HingeJoint2D>();
+            Joint = gameObject.AddComponent<DistanceJoint2D>();
         }
 
         
@@ -34,7 +34,7 @@ public class BodyPart : MonoBehaviour
         }
         }
 
-    private void SetupSpringJoint()
+    protected void SetupJoint()
     {
         if (prevBodyPart != null)
         {

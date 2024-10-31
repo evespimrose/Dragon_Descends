@@ -10,9 +10,12 @@ public class Enemy : MonoBehaviour
     public GameObject rendererObject;
     private SpriteRenderer spriteRenderer;
 
+    private float baseExperiencePerKill = 5f;
+    private float experienceGainRate = 1f;
+    
+
     private void Start()
     {
-        // "Renderer" 오브젝트에서 SpriteRenderer 컴포넌트 가져오기
         spriteRenderer = rendererObject.GetComponent<SpriteRenderer>();
     }
 
@@ -39,5 +42,13 @@ public class Enemy : MonoBehaviour
     {
         if (transform.position.x > target.position.x) spriteRenderer.flipY = true;
         else spriteRenderer.flipY = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Projectile"))
+        {
+            CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f);
+        }
     }
 }

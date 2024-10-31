@@ -5,29 +5,23 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public List<BodyPart> parts;
+    public Tail tail;
+
     public Vector2 Target;
 
     private PlayerStat stat;
     public float moveSpeed = 1f;
     public float hp = 1f;
     public float experience;
-    public float level;
+    public int level;
+
+    public float expRequired { get { return level * 10; } }
+    public float expAmount { get { return (experience - Requiredexp(level, 0)) / expRequired; } }
 
     private void Awake()
     {
-        BodyPart part = new();
-        for (int i = 0; i < parts.Count; i++)
-        {
-            if(i == 0)
-            {
-                part = parts[i];
-            }
-            else
-            {
-                parts[i].prevBodyPart = part.gameObject;
-                part = parts[i];
-            }
-        }
+        BindBodyParts();
+
         stat = GetComponent<PlayerStat>();
         Target = transform.position;
         UpdateStats();
@@ -38,6 +32,7 @@ public class Player : MonoBehaviour
         PlayerInput();
         Move();
         UpdateStats();
+        UpdateUI();
     }
 
     private void PlayerInput()
@@ -76,10 +71,64 @@ public class Player : MonoBehaviour
 
     public void LevelUp()
     {
-        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("BodyPrefab"), parts[parts.Count - 2].transform.position, Quaternion.identity);
-        newBody.prevBodyPart = parts[parts.Count - 2].gameObject;
+        UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
+        if (level < 3)
+            UIManager.Instance.nextLeveltext.text = "Lv." + (level + 1).ToString();
+        else
+            UIManager.Instance.nextLeveltext.text = "MaxLevel";
 
-        parts.Insert(parts.Count - 1, newBody);
-        parts[parts.Count - 1].prevBodyPart = newBody.gameObject; // Tail의 prevBodyPart를 새로 추가된 Body로 업데이트
+        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("BodyPrefab"), parts[parts.Count - 1].transform.position, Quaternion.identity);
+        newBody.prevBodyPart = parts[parts.Count - 1].gameObject;
+
+        parts.Insert(parts.Count, newBody);
+        tail.ChangeChaseBodyPart(newBody.gameObject);
+    }
+
+    private void BindBodyParts()
+    {
+        BodyPart part = new();
+        for (int i = 0; i < parts.Count; i++)
+        {
+            if (i == 0)
+            {
+                parts[i].prevBodyPart = gameObject;
+                part = parts[i];
+            }
+            else
+            {
+                parts[i].prevBodyPart = part.gameObject;
+                part = parts[i];
+            }
+        }
+        tail.ChangeChaseBodyPart(parts[parts.Count - 1].gameObject);
+    }
+
+    private void UpdateUI()
+    {
+        UIManager.Instance.expImage.fillAmount = expAmount;
+    }
+
+    public void GainExperience(float exp)
+    {
+        experience += exp;
+
+        if ((experience - Requiredexp(level, 0)) >= expRequired)
+        {
+            LevelUp();
+        }
+    }
+
+    private int Requiredexp(int lv, int result)
+    {
+        if (lv == 0)
+        {
+            return result;
+        }
+        else
+        {
+            result += (lv - 1) * 10;
+            return Requiredexp(lv - 1, result);
+        }
+
     }
 }
