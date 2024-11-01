@@ -12,11 +12,15 @@ public class Enemy : MonoBehaviour
 
     private float baseExperiencePerKill = 5f;
     private float experienceGainRate = 1f;
-    
+    public float hp = 1;
+
+    public delegate void EventHandler();
+    public event EventHandler OnDestroyed;
 
     private void Start()
     {
         spriteRenderer = rendererObject.GetComponent<SpriteRenderer>();
+        OnDestroyed += () => { CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f); };
     }
 
     private void Update()
@@ -43,12 +47,33 @@ public class Enemy : MonoBehaviour
         if (transform.position.x > target.position.x) spriteRenderer.flipY = true;
         else spriteRenderer.flipY = false;
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void TakeDamage(float damageAmount)
     {
-        if(collision.CompareTag("Projectile"))
+        hp -= damageAmount;
+
+        if (hp <= 0)
         {
-            CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f);
+            OnDeath();
         }
     }
+
+    private void OnDeath()
+    {
+
+        OnDestroyed?.Invoke();
+        
+        Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //GameEnd
+
+            //print("플레이어 죽음!");
+        }
+    }
+
+    
 }

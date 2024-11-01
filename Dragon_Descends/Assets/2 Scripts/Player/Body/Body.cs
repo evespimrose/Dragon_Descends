@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Body : BodyPart
 {
-
+    public GameObject cannon;
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     public float hp = 1f;
     public float experience;
     public int level;
+    public int damage = 1;
 
     public float expRequired { get { return level * 10; } }
     public float expAmount { get { return (experience - Requiredexp(level, 0)) / expRequired; } }
@@ -71,14 +73,25 @@ public class Player : MonoBehaviour
 
     public void LevelUp()
     {
+        level++;
         UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
         if (level < 3)
             UIManager.Instance.nextLeveltext.text = "Lv." + (level + 1).ToString();
         else
             UIManager.Instance.nextLeveltext.text = "MaxLevel";
 
-        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("BodyPrefab"), parts[parts.Count - 1].transform.position, Quaternion.identity);
+        // newBody 부분 레벨업패널과 연동해야 함.
+        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), parts[parts.Count - 1].transform.position, Quaternion.identity);
+
         newBody.prevBodyPart = parts[parts.Count - 1].gameObject;
+        DistanceJoint2D distanceJoint2D = newBody.GetComponent<DistanceJoint2D>();
+        distanceJoint2D.connectedBody = newBody.prevBodyPart.GetComponent<Rigidbody2D>();
+
+        if (newBody.TryGetComponent<Body>(out Body body))
+        {
+            Skill skill = newBody.AddComponent<Skill>();
+            skill.Cannon = body.cannon;
+        }
 
         parts.Insert(parts.Count, newBody);
         tail.ChangeChaseBodyPart(newBody.gameObject);
@@ -93,12 +106,19 @@ public class Player : MonoBehaviour
             {
                 parts[i].prevBodyPart = gameObject;
                 part = parts[i];
+                
             }
             else
             {
                 parts[i].prevBodyPart = part.gameObject;
                 part = parts[i];
             }
+            if (parts[i].TryGetComponent<Body>(out Body body))
+            {
+                Skill skill = parts[i].AddComponent<Skill>();
+                skill.Cannon = body.cannon;
+            }
+
         }
         tail.ChangeChaseBodyPart(parts[parts.Count - 1].gameObject);
     }
@@ -129,6 +149,20 @@ public class Player : MonoBehaviour
             result += (lv - 1) * 10;
             return Requiredexp(lv - 1, result);
         }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Enemy"))
+        {
+            OnDeath();
+            print("플레이어 죽음!");
+        }
+    }
+
+    private void OnDeath()
+    {
 
     }
 }
