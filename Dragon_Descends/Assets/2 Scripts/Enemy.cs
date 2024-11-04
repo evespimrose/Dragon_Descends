@@ -13,20 +13,27 @@ public class Enemy : MonoBehaviour
     private float baseExperiencePerKill = 5f;
     private float experienceGainRate = 1f;
     public float hp = 1;
+    private bool isAlive = true;
 
     public delegate void EventHandler();
     public event EventHandler OnDestroyed;
 
+    public Animator animator;
+
     private void Start()
     {
         spriteRenderer = rendererObject.GetComponent<SpriteRenderer>();
-        OnDestroyed += () => { CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f); };
+        OnDestroyed += () => {
+            if(!CharacterManager.Instance.player.isMaxLv)
+                CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f);
+        };
     }
 
     private void Update()
     {
         SetTargetDirection();
-        Move();
+        if(isAlive)
+            Move();
 
         SpriteVectorflip();
     }
@@ -53,12 +60,21 @@ public class Enemy : MonoBehaviour
 
         if (hp <= 0)
         {
-            OnDeath();
+            StartCoroutine(OnDeath());
         }
     }
 
-    private void OnDeath()
+    private IEnumerator OnDeath()
     {
+        isAlive = false;
+        print("OnDeath!");
+        CharacterManager.Instance.enemies.Remove(this);
+        gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
+        gameObject.GetComponent<Enemy>().enabled = false;
+        //gameObject.GetComponent<Rigidbody2D>().gameObject.SetActive(false);
+        animator.SetTrigger("isDead");
+
+        yield return new WaitForSeconds(3f);
 
         OnDestroyed?.Invoke();
         

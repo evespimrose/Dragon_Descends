@@ -16,9 +16,10 @@ public class Skill : MonoBehaviour
     public Projectile projectilePrefab;
     public GameObject Cannon;
 
+    public float duration = 5f;
     private float detectionRadius = 12.9f;
 
-    private void Start()
+    protected void Start()
     {
         StartCoroutine(CannonAim());
         StartCoroutine(AutoFire());
@@ -66,13 +67,12 @@ public class Skill : MonoBehaviour
 
             projectile.transform.up = closestEnemy.position - transform.position;
             projectile.transform.localScale *= projectileSize;
-
-            Projectile projectileScript = projectile.GetComponent<Projectile>();
-            projectileScript.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);
+            projectile.duration = 5f;
+            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);
         }
     }
 
-    private IEnumerator CannonAim()
+    protected IEnumerator CannonAim()
     {
         while (true)
         {

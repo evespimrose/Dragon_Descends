@@ -34,7 +34,7 @@ public class BodyPart : MonoBehaviour
         }
         }
 
-    protected void SetupJoint()
+    public void SetupJoint()
     {
         if (prevBodyPart != null)
         {

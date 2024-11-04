@@ -6,9 +6,15 @@ public class Projectile : MonoBehaviour
 {
     protected float damage = 1;
 
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] protected float moveSpeed = 5f;
+    public float duration = 5f;
 
-    void Update()
+    protected virtual void Start()
+    {
+        StartCoroutine(OnMyDestroy(duration));
+    }
+
+    protected virtual void Update()
     {
         Move(Vector2.up);
     }
@@ -17,14 +23,13 @@ public class Projectile : MonoBehaviour
         transform.Translate((moveSpeed) * Time.deltaTime * dir);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        //print("총알 맞음! " + collision.gameObject.name);
         if (collision.CompareTag("Enemy"))
         {
             print("총알 적한테 맞음! ");
             collision.GetComponent<Enemy>().TakeDamage(damage);
-            Destroy(gameObject);
+            StartCoroutine(OnMyDestroy(0f));
         }
     }
 
@@ -32,5 +37,11 @@ public class Projectile : MonoBehaviour
     {
         damage *= damagemul;
         moveSpeed *= movemul;
+    }
+
+    public virtual IEnumerator OnMyDestroy(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        Destroy(gameObject);
     }
 }

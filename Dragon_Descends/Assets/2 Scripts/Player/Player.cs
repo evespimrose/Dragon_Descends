@@ -20,13 +20,17 @@ public class Player : MonoBehaviour
     public float expRequired { get { return level * 10; } }
     public float expAmount { get { return (experience - Requiredexp(level, 0)) / expRequired; } }
 
+    public bool isMaxLv {  get { return level >= 3; } }
+
     private void Awake()
     {
-        BindBodyParts();
-
         stat = GetComponent<PlayerStat>();
         Target = transform.position;
         UpdateStats();
+    }
+    private void Start()
+    {
+        BindBodyParts();
     }
 
     private void Update()
@@ -80,45 +84,34 @@ public class Player : MonoBehaviour
         else
             UIManager.Instance.nextLeveltext.text = "MaxLevel";
 
+        UIManager.Instance.GameSkillLevelUpPauseResume();
+
         // newBody 부분 레벨업패널과 연동해야 함.
-        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), parts[parts.Count - 1].transform.position, Quaternion.identity);
-
-        newBody.prevBodyPart = parts[parts.Count - 1].gameObject;
-        DistanceJoint2D distanceJoint2D = newBody.GetComponent<DistanceJoint2D>();
-        distanceJoint2D.connectedBody = newBody.prevBodyPart.GetComponent<Rigidbody2D>();
-
-        if (newBody.TryGetComponent<Body>(out Body body))
-        {
-            Skill skill = newBody.AddComponent<Skill>();
-            skill.Cannon = body.cannon;
-        }
-
-        parts.Insert(parts.Count, newBody);
-        tail.ChangeChaseBodyPart(newBody.gameObject);
+        
     }
 
-    private void BindBodyParts()
+    public void BindBodyParts()
     {
         BodyPart part = new();
         for (int i = 0; i < parts.Count; i++)
         {
+            print(i);
             if (i == 0)
             {
                 parts[i].prevBodyPart = gameObject;
                 part = parts[i];
-                
             }
             else
             {
                 parts[i].prevBodyPart = part.gameObject;
                 part = parts[i];
             }
-            if (parts[i].TryGetComponent<Body>(out Body body))
+            if (parts.Count == 1 && parts[i].TryGetComponent<Body>(out Body body))
             {
-                Skill skill = parts[i].AddComponent<Skill>();
+                Bomber skill = parts[i].AddComponent<Bomber>();
                 skill.Cannon = body.cannon;
             }
-
+            parts[i].SetupJoint();
         }
         tail.ChangeChaseBodyPart(parts[parts.Count - 1].gameObject);
     }

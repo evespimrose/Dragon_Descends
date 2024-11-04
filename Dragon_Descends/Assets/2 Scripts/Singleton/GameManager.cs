@@ -1,13 +1,21 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : SingletonManager<GameManager>
 {
     public float timeSinceStart;
+    [SerializeField] private List<Projectile> projectiles = new List<Projectile>();
+    [SerializeField] private List<Skill> skills;
+    public List<Projectile> projs => projectiles;
+
+
+    private Camera mainCamera;
 
     private void Start()
     {
         timeSinceStart = 0f;
+        mainCamera = Camera.main;
     }
 
     private void Update()
@@ -39,4 +47,6 @@ public class GameManager : SingletonManager<GameManager>
             CharacterManager.Instance.SetWave(1f, 50);
         }
     }
+
+    
 }

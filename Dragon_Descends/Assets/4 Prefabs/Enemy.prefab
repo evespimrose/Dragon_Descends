@@ -87,6 +87,7 @@ MonoBehaviour:
   moveSpeed: 3.5
   rendererObject: {fileID: 6094957551399403774}
   hp: 0
+  animator: {fileID: 7307545256725336924}
 --- !u!114 &4765500684924336385
 MonoBehaviour:
   m_ObjectHideFlags: 0
