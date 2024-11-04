@@ -122,7 +122,6 @@ public class UIManager : SingletonManager<UIManager>
                 break;
         }
 
-        // Configure Skill 2 button, image, name, and description
         switch (skillIndex2)
         {
             case 0:
@@ -168,7 +167,49 @@ public class UIManager : SingletonManager<UIManager>
         p.BindBodyParts();
         p.tail.ChangeChaseBodyPart(newBody.gameObject);
     }
-    private void OnClickBomber() { /* Bomber skill logic */ }
-    private void OnClickCrescent() { /* Crescent skill logic */ }
-    private void OnClickHoop() { /* Hoop skill logic */ }
+    private void OnClickBomber() {
+        Player p = CharacterManager.Instance.player;
+        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
+
+        newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
+
+        p.parts.Insert(p.parts.Count, newBody);
+        if (newBody.TryGetComponent<Body>(out Body body))
+        {
+            Bomber skill = newBody.gameObject.AddComponent<Bomber>();
+            skill.Cannon = body.cannon;
+        }
+        p.BindBodyParts();
+        p.tail.ChangeChaseBodyPart(newBody.gameObject);
+    }
+    private void OnClickCrescent() {
+        Player p = CharacterManager.Instance.player;
+        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
+
+        newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
+
+        p.parts.Insert(p.parts.Count, newBody);
+        if (newBody.TryGetComponent<Body>(out Body body))
+        {
+            Crescent skill = newBody.gameObject.AddComponent<Crescent>();
+            skill.Cannon = body.cannon;
+        }
+        p.BindBodyParts();
+        p.tail.ChangeChaseBodyPart(newBody.gameObject);
+    }
+    private void OnClickHoop() {
+        Player p = CharacterManager.Instance.player;
+        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
+
+        newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
+
+        p.parts.Insert(p.parts.Count, newBody);
+        if (newBody.TryGetComponent<Body>(out Body body))
+        {
+            Hoop skill = newBody.gameObject.AddComponent<Hoop>();
+            skill.Cannon = body.cannon;
+        }
+        p.BindBodyParts();
+        p.tail.ChangeChaseBodyPart(newBody.gameObject);
+    }
 }

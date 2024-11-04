@@ -39,6 +39,15 @@ public class Projectile : MonoBehaviour
         moveSpeed *= movemul;
     }
 
+    public void IgnoreCollisionWith(Enemy enemy)
+    {
+        Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
+        if (enemyCollider != null)
+        {
+            Physics2D.IgnoreCollision(GetComponent<Collider2D>(), enemyCollider);
+        }
+    }
+
     public virtual IEnumerator OnMyDestroy(float duration)
     {
         yield return new WaitForSeconds(duration);

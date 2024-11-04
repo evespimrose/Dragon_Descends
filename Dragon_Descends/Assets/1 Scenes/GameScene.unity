@@ -2376,7 +2376,8 @@ MonoBehaviour:
   pauseButton: {fileID: 923263096}
   resumeButton: {fileID: 2061586839}
   quitButton: {fileID: 1471845300}
-  SkillSpriteList: []
+  SkillSpriteList:
+  - {fileID: 21300000, guid: c540a7c2bde0baa4f84f987cfdc0d487, type: 3}
 --- !u!4 &877099723
 Transform:
   m_ObjectHideFlags: 0

@@ -1,18 +1,41 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HoopProjectile : MonoBehaviour
+public class HoopProjectile : Projectile
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private int splitProjectileCount = 4;
+    private bool hasHitEnemy = false;
+    private Enemy initialHitEnemy;
+
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (!hasHitEnemy && collision.CompareTag("Enemy"))
+        {
+            hasHitEnemy = true;
+            initialHitEnemy = collision.GetComponent<Enemy>();
+
+            // Inflict damage to the first hit enemy
+            initialHitEnemy.TakeDamage(damage);
+
+            SpawnSplitProjectiles();
+
+            StartCoroutine(OnMyDestroy(0f));
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SpawnSplitProjectiles()
     {
-        
+        for (int i = 0; i < splitProjectileCount; i++)
+        {
+            float angle = 360f / splitProjectileCount * i;
+            Vector2 direction = Quaternion.Euler(0, 0, angle) * Vector2.up;
+
+            Projectile splitProjectile = Instantiate(Resources.Load<Projectile>("Projectile"), transform.position, Quaternion.identity);
+            splitProjectile.transform.up = direction;
+            splitProjectile.transform.localScale *= 0.7f;
+            splitProjectile.SetStats(damage, moveSpeed);
+            splitProjectile.IgnoreCollisionWith(initialHitEnemy);
+        }
     }
+
 }

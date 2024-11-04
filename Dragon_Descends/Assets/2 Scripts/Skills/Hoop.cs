@@ -1,18 +1,32 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Hoop : Skill
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private HoopProjectile hoopProjectilePrefab;
+
+    protected override IEnumerator AutoFire()
     {
-        
+        isFiring = true;
+        while (true)
+        {
+            yield return new WaitUntil(() => SeekClosestEnemy() != null);
+            yield return new WaitForSeconds(fireRate);
+
+            FireHoopProjectileAtClosestEnemy();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FireHoopProjectileAtClosestEnemy()
     {
-        
+        Transform closestEnemy = SeekClosestEnemy();
+        if (closestEnemy != null)
+        {
+            // Instantiate and set up the HoopProjectile
+            HoopProjectile hoopProjectile = Instantiate(hoopProjectilePrefab, transform.position, Quaternion.identity);
+            hoopProjectile.transform.up = closestEnemy.position - transform.position;
+            hoopProjectile.transform.localScale *= 1.2f;
+            hoopProjectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed);
+        }
     }
 }

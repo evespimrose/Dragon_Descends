@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class BombProjectile : Projectile
@@ -9,8 +10,7 @@ public class BombProjectile : Projectile
 
     protected override void Start()
     {
-        animator = GetComponent<Animator>();
-        StartCoroutine(OnMyDestroy(false, 5f));
+        StartCoroutine(OnMyDestroy(5f));
     }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
@@ -37,41 +37,34 @@ public class BombProjectile : Projectile
         }
 
         DamageEnemiesInRadius();
-        StartCoroutine(OnMyDestroy(true, 2f));
+        StartCoroutine(OnMyDestroy(2f));
     }
 
     private void DamageEnemiesInRadius()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
 
-        foreach (Collider2D enemy in enemies)
+        for (int i = 0;i< enemies.Count();++i)
         {
-            if (enemy.CompareTag("Enemy"))
-            {
-                enemy.GetComponent<Enemy>().TakeDamage(damage);
-            }
+            if (enemies[i].CompareTag("Enemy"))
+                enemies[i].GetComponent<Enemy>().TakeDamage(damage);
         }
     }
 
     public override IEnumerator OnMyDestroy(float duration)
     {
-        if (animator != null)
-        {
-            animator.SetTrigger("OnDestroy");
-        }
-
         yield return new WaitForSeconds(duration);
-        Destroy(gameObject);
-    }
 
-    public IEnumerator OnMyDestroy(bool flag, float duration)
-    {
-        if (flag && animator != null)
+        float elapsedTime = 0f;
+        Vector3 originalScale = transform.localScale;
+        Vector3 targetScale = new Vector3(0, 0, 1f);
+
+        while (elapsedTime < 0.5f)
         {
-            animator.SetTrigger("OnDestroy");
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsedTime / 0.5f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-
-        yield return new WaitForSeconds(duration);
         Destroy(gameObject);
     }
 }
