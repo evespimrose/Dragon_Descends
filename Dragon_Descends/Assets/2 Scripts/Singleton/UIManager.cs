@@ -16,24 +16,27 @@ public class UIManager : SingletonManager<UIManager>
 
     public Image expImage;
 
-    public GameObject pausePanel;
+    public PausePanel pausePanel;
     public LevelUpPanel levelUpPanel;
+    public GameOverPanel gameOverPanel;
 
     public Button pauseButton;
-    public Button resumeButton;
-    public Button quitButton;
 
     private bool isPaused = false;
+    private bool isGameOver = false;
+    private bool isLevelUp = false;
 
-    private List<int> SkillIndexList = new List<int> { 0, 1, 2, 3 }; // Assume 4 unique skill indices
+    private List<int> SkillIndexList = new List<int> { 0, 1, 2, 3 };
 
     public List<Sprite> SkillSpriteList = new(4);
 
     private void Start()
     {
         pauseButton.onClick.AddListener(() => { GamePauseResume(); });
-        resumeButton.onClick.AddListener(() => { GamePauseResume(); });
-        quitButton.onClick.AddListener(() => { GameQuit(); });
+        pausePanel.resumeButton.onClick.AddListener(() => { GamePauseResume(); });
+        pausePanel.quitButton.onClick.AddListener(() => { GameQuit(); });
+        gameOverPanel.reStartButton.onClick.AddListener(() => { OnGameReStart(); });
+        gameOverPanel.quitButton.onClick.AddListener(() => { GameQuit(); });
     }
 
     private void Update()
@@ -58,20 +61,38 @@ public class UIManager : SingletonManager<UIManager>
     private void GamePauseResume()
     {
         isPaused = !isPaused;
-        pausePanel.SetActive(isPaused);
+        pausePanel.gameObject.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1.0f;
+    }
+
+    private void PauseResume()
+    {
+        //print("PauseResume" + isLevelUp);
+        isLevelUp = !isLevelUp;
+        levelUpPanel.gameObject.SetActive(isLevelUp);
+        Time.timeScale = isPaused ? 0f : 1.0f;
+        //print("PauseResume" + isLevelUp);
+    }
+
+    public void GameOverPauseResume()
+    {
+        isGameOver = !isGameOver;
+        gameOverPanel.gameObject.SetActive(isGameOver);
+        Time.timeScale = isGameOver ? 0f : 1.0f;
     }
 
     public void GameSkillLevelUpPauseResume()
     {
-        isPaused = !isPaused;
-        levelUpPanel.gameObject.SetActive(isPaused);
+        if (CharacterManager.Instance.player.IsMaxLv) return;
+
+        isLevelUp = !isLevelUp;
+        levelUpPanel.gameObject.SetActive(isLevelUp);
+
         Tuple<int, int> skillPair = RandomSkillPop();
 
-        // Call SetLevelUpPanel with the selected skills
         SetLevelUpPanel(skillPair.Item1, skillPair.Item2);
 
-        Time.timeScale = isPaused ? 0f : 1.0f;
+        Time.timeScale = isLevelUp ? 0f : 1.0f;
     }
 
     private Tuple<int, int> RandomSkillPop()
@@ -95,30 +116,33 @@ public class UIManager : SingletonManager<UIManager>
 
     private void SetLevelUpPanel(int skillIndex1, int skillIndex2)
     {
+        InitButtons();
+        print($"{skillIndex1}, {skillIndex2}");
         levelUpPanel.skill1Image.sprite = SkillSpriteList[skillIndex1];
         levelUpPanel.skill2Image.sprite = SkillSpriteList[skillIndex2];
+        print(SkillSpriteList[skillIndex1].name + ", " + SkillSpriteList[skillIndex2].name);
 
         switch (skillIndex1)
         {
             case 0:
                 levelUpPanel.skill1Button.onClick.AddListener(OnClickBeam);
-                levelUpPanel.skill1NameText.text = "Beam";
-                levelUpPanel.skill1DescText.text = "Fires a powerful energy beam.";
+                levelUpPanel.skill1NameText.text = "ºûÁÙ±â";
+                levelUpPanel.skill1DescText.text = "·¹ÀÌÀú ºö ¹ß»ç";
                 break;
             case 1:
                 levelUpPanel.skill1Button.onClick.AddListener(OnClickBomber);
-                levelUpPanel.skill1NameText.text = "Bomber";
-                levelUpPanel.skill1DescText.text = "Drops explosive bombs around.";
+                levelUpPanel.skill1NameText.text = "Æø¹ß±¸";
+                levelUpPanel.skill1DescText.text = "Ã¹ °ø°Ý ÈÄ Æø¹ß";
                 break;
             case 2:
                 levelUpPanel.skill1Button.onClick.AddListener(OnClickCrescent);
-                levelUpPanel.skill1NameText.text = "Crescent";
-                levelUpPanel.skill1DescText.text = "Unleashes a crescent-shaped slash.";
+                levelUpPanel.skill1NameText.text = "ÃÊ½Â±¸";
+                levelUpPanel.skill1DescText.text = "ÃÊ½Â´Þ ¸ð¾ç Åõ»çÃ¼ ¹ß»ç";
                 break;
             case 3:
                 levelUpPanel.skill1Button.onClick.AddListener(OnClickHoop);
-                levelUpPanel.skill1NameText.text = "Hoop";
-                levelUpPanel.skill1DescText.text = "Throws a hoop that returns.";
+                levelUpPanel.skill1NameText.text = "±¼··¼è";
+                levelUpPanel.skill1DescText.text = "Ã¹ °ø°Ý ÈÄ »ç¹æÀ¸·Î ºÐ¿­";
                 break;
         }
 
@@ -126,33 +150,36 @@ public class UIManager : SingletonManager<UIManager>
         {
             case 0:
                 levelUpPanel.skill2Button.onClick.AddListener(OnClickBeam);
-                levelUpPanel.skill2NameText.text = "Beam";
-                levelUpPanel.skill2DescText.text = "Fires a powerful energy beam.";
+                levelUpPanel.skill2NameText.text = "ºûÁÙ±â";
+                levelUpPanel.skill2DescText.text = "·¹ÀÌÀú ºö ¹ß»ç";
                 break;
             case 1:
                 levelUpPanel.skill2Button.onClick.AddListener(OnClickBomber);
-                levelUpPanel.skill2NameText.text = "Bomber";
-                levelUpPanel.skill2DescText.text = "Drops explosive bombs around.";
+                levelUpPanel.skill2NameText.text = "Æø¹ß±¸";
+                levelUpPanel.skill2DescText.text = "Ã¹ °ø°Ý ÈÄ Æø¹ß";
                 break;
             case 2:
                 levelUpPanel.skill2Button.onClick.AddListener(OnClickCrescent);
-                levelUpPanel.skill2NameText.text = "Crescent";
-                levelUpPanel.skill2DescText.text = "Unleashes a crescent-shaped slash.";
+                levelUpPanel.skill2NameText.text = "ÃÊ½Â±¸";
+                levelUpPanel.skill2DescText.text = "ÃÊ½Â´Þ ¸ð¾ç Åõ»çÃ¼ ¹ß»ç";
                 break;
             case 3:
                 levelUpPanel.skill2Button.onClick.AddListener(OnClickHoop);
-                levelUpPanel.skill2NameText.text = "Hoop";
-                levelUpPanel.skill2DescText.text = "Throws a hoop that returns.";
+                levelUpPanel.skill2NameText.text = "±¼··¼è";
+                levelUpPanel.skill2DescText.text = "Ã¹ °ø°Ý ÈÄ »ç¹æÀ¸·Î ºÐ¿­";
                 break;
         }
     }
 
-    private void GameQuit()
+    private void InitButtons()
     {
-        // Implement game quit functionality
+        levelUpPanel.skill1Button.onClick.RemoveAllListeners();
+        levelUpPanel.skill2Button.onClick.RemoveAllListeners();
     }
 
-    private void OnClickBeam() {
+    private void OnClickBeam() 
+    {
+        print("ºûÁÙ±â" + isPaused);
         Player p = CharacterManager.Instance.player;
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
@@ -164,10 +191,17 @@ public class UIManager : SingletonManager<UIManager>
             Beam skill = newBody.gameObject.AddComponent<Beam>();
             skill.Cannon = body.cannon;
         }
-        p.BindBodyParts();
+        newBody.SetupJoint();
         p.tail.ChangeChaseBodyPart(newBody.gameObject);
+
+        SkillIndexList.Remove(0);
+        InitButtons();
+        PauseResume();
     }
-    private void OnClickBomber() {
+    private void OnClickBomber()
+    {
+        print("ÆøÅº" + isPaused);
+
         Player p = CharacterManager.Instance.player;
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
@@ -179,10 +213,17 @@ public class UIManager : SingletonManager<UIManager>
             Bomber skill = newBody.gameObject.AddComponent<Bomber>();
             skill.Cannon = body.cannon;
         }
-        p.BindBodyParts();
+        newBody.SetupJoint();
         p.tail.ChangeChaseBodyPart(newBody.gameObject);
+
+        SkillIndexList.Remove(1);
+        InitButtons();
+        PauseResume();
     }
-    private void OnClickCrescent() {
+    private void OnClickCrescent() 
+    {
+        print("ÃÊ½Â´Þ" + isPaused);
+
         Player p = CharacterManager.Instance.player;
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
@@ -194,10 +235,17 @@ public class UIManager : SingletonManager<UIManager>
             Crescent skill = newBody.gameObject.AddComponent<Crescent>();
             skill.Cannon = body.cannon;
         }
-        p.BindBodyParts();
+        newBody.SetupJoint();
         p.tail.ChangeChaseBodyPart(newBody.gameObject);
+
+        SkillIndexList.Remove(2);
+        InitButtons();
+        PauseResume();
     }
-    private void OnClickHoop() {
+    private void OnClickHoop() 
+    {
+        print("±¼··¼è" + isPaused);
+
         Player p = CharacterManager.Instance.player;
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
@@ -209,7 +257,40 @@ public class UIManager : SingletonManager<UIManager>
             Hoop skill = newBody.gameObject.AddComponent<Hoop>();
             skill.Cannon = body.cannon;
         }
-        p.BindBodyParts();
+        newBody.SetupJoint();
         p.tail.ChangeChaseBodyPart(newBody.gameObject);
+
+        SkillIndexList.Remove(3);
+        InitButtons();
+        PauseResume();
     }
+
+    public void OnGameReStart()
+    {
+        for (int i = CharacterManager.Instance.enemies.Count - 1; i >= 0; --i)
+        {
+            GameObject enemy = CharacterManager.Instance.enemies[i].gameObject;
+            enemy.SetActive(false);
+            Destroy(enemy);
+        }
+        CharacterManager.Instance.enemies.Clear();
+
+        Player player = CharacterManager.Instance.player;
+        player.ResetPlayer();
+
+        isPaused = false;
+        gameOverPanel.gameObject.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+
+
+    public void GameQuit()
+    {
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
 }

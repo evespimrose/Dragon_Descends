@@ -17,10 +17,34 @@ public class Player : MonoBehaviour
     public int level;
     public int damage = 1;
 
-    public float expRequired { get { return level * 10; } }
-    public float expAmount { get { return (experience - Requiredexp(level, 0)) / expRequired; } }
+    public float ExpRequired 
+    { get 
+        {
+            return level switch
+            {
+                0 => 100,
+                1 => 100,
+                2 => 500,
+                3 => 1500,
+                _ => (float)0
+            };
+        } 
+    }
+    //=> IsMaxLv ? 1f : (experience - Requiredexp(level - 1 , 0)) / ExpRequired;
+    public float ExpAmount
+    {
+        get
+        {
+            if (IsMaxLv)
+                return 1f;
+            else if (level == 0)
+                return experience / ExpRequired;
+            else
+                return (experience - Requiredexp(level, 0)) / ExpRequired;
+        }
+    }
 
-    public bool isMaxLv {  get { return level >= 3; } }
+    public bool IsMaxLv {  get { return level > 3; } }
 
     private void Awake()
     {
@@ -77,6 +101,8 @@ public class Player : MonoBehaviour
 
     public void LevelUp()
     {
+        if (IsMaxLv) return;
+
         level++;
         UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
         if (level < 3)
@@ -85,17 +111,14 @@ public class Player : MonoBehaviour
             UIManager.Instance.nextLeveltext.text = "MaxLevel";
 
         UIManager.Instance.GameSkillLevelUpPauseResume();
-
-        // newBody 부분 레벨업패널과 연동해야 함.
-        
     }
+
 
     public void BindBodyParts()
     {
-        BodyPart part = new();
+        BodyPart part = new BodyPart();
         for (int i = 0; i < parts.Count; i++)
         {
-            print(i);
             if (i == 0)
             {
                 parts[i].prevBodyPart = gameObject;
@@ -108,7 +131,7 @@ public class Player : MonoBehaviour
             }
             if (parts.Count == 1 && parts[i].TryGetComponent<Body>(out Body body))
             {
-                Bomber skill = parts[i].AddComponent<Bomber>();
+                Skill skill = parts[i].AddComponent<Skill>();
                 skill.Cannon = body.cannon;
             }
             parts[i].SetupJoint();
@@ -118,44 +141,124 @@ public class Player : MonoBehaviour
 
     private void UpdateUI()
     {
-        UIManager.Instance.expImage.fillAmount = expAmount;
+        if (IsMaxLv)
+        {
+            UIManager.Instance.expImage.fillAmount = 1f;
+            UIManager.Instance.nextLeveltext.text = "MaxLevel";
+        }
+        else
+            UIManager.Instance.expImage.fillAmount = ExpAmount;
     }
 
     public void GainExperience(float exp)
     {
-        experience += exp;
+        if (IsMaxLv)
+        {
+            experience = ExpRequired;
+            return;
+        }
 
-        if ((experience - Requiredexp(level, 0)) >= expRequired)
+        experience += exp;
+        if (!IsMaxLv && (experience - Requiredexp(level - 1, 0)) >= ExpRequired)
         {
             LevelUp();
         }
     }
 
+
     private int Requiredexp(int lv, int result)
     {
-        if (lv == 0)
+        switch(lv+1)
         {
-            return result;
-        }
-        else
-        {
-            result += (lv - 1) * 10;
-            return Requiredexp(lv - 1, result);
-        }
-
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.CompareTag("Enemy"))
-        {
-            OnDeath();
-            print("플레이어 죽음!");
+            case 0: return result;
+            case 1:
+                result += 100;
+                return Requiredexp(lv - 1, result);
+            case 2:
+                result += 500;
+                return Requiredexp(lv - 1, result);
+            default:
+                result += 1500;
+                return Requiredexp(lv - 1, result);
         }
     }
 
-    private void OnDeath()
-    {
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Projectile") && collision.TryGetComponent<BombProjectile>(out BombProjectile bombProjectile))
+        {
+            ParticleSystem particleSystem = bombProjectile.GetComponent<ParticleSystem>();
+
+            if (particleSystem != null)
+            {
+                var main = particleSystem.main;
+                Color startColor = main.startColor.color;
+                startColor.a = 0.5f;
+                main.startColor = startColor;
+            }
+        }
+        else if (collision.CompareTag("Bush"))
+        {
+            SpriteRenderer spriteRenderer = collision.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                Color spriteColor = spriteRenderer.color;
+                spriteColor.a = 0.3f;
+                spriteRenderer.color = spriteColor;
+            }
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Projectile") && collision.TryGetComponent<BombProjectile>(out BombProjectile bombProjectile))
+        {
+            ParticleSystem particleSystem = bombProjectile.GetComponent<ParticleSystem>();
+
+            if (particleSystem != null)
+            {
+                var main = particleSystem.main;
+                Color startColor = main.startColor.color;
+                startColor.a = 1f;
+                main.startColor = startColor;
+            }
+        }
+        else if (collision.CompareTag("Bush"))
+        {
+            SpriteRenderer spriteRenderer = collision.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                Color spriteColor = spriteRenderer.color;
+                spriteColor.a = 1f;
+                spriteRenderer.color = spriteColor;
+            }
+        }
+    }
+    public void ResetPlayer()
+    {
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+
+        level = 0;
+        experience = 0;
+
+        UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
+        UIManager.Instance.nextLeveltext.text = "Lv." + (level + 1).ToString();
+        UIManager.Instance.expImage.fillAmount = 0;
+
+        for (int i = parts.Count - 1; i >= 1; i--)
+        {
+            Destroy(parts[i].gameObject);
+            parts.RemoveAt(i);
+        }
+
+        tail.ChangeChaseBodyPart(parts[0].gameObject);
+        parts[0].transform.position = transform.position;
+        tail.transform.position = transform.position;
+    }
+
+    public void OnDeath()
+    {
+        UIManager.Instance.GameOverPauseResume();
     }
 }

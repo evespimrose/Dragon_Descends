@@ -33,7 +33,7 @@ public class HoopProjectile : Projectile
             Projectile splitProjectile = Instantiate(Resources.Load<Projectile>("Projectile"), transform.position, Quaternion.identity);
             splitProjectile.transform.up = direction;
             splitProjectile.transform.localScale *= 0.7f;
-            splitProjectile.SetStats(damage, moveSpeed);
+            splitProjectile.SetStats(damage, 1f);
             splitProjectile.IgnoreCollisionWith(initialHitEnemy);
         }
     }

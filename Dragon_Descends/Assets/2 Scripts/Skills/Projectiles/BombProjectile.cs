@@ -29,21 +29,31 @@ public class BombProjectile : Projectile
         Vector3 targetScale = new Vector3(explosionRadius, explosionRadius, 1f);
         moveSpeed = 0f;
 
+        CircleCollider2D circleCollider = gameObject.GetComponent<CircleCollider2D>();
+        float originalRadius = circleCollider.radius;
+
         while (elapsedTime < 2f)
         {
+            // Interpolate the scale for the explosion effect
             transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsedTime / 2f);
+
+            // Update the circleCollider radius proportionally to the local scale's x component
+            circleCollider.radius = Mathf.Lerp(originalRadius, explosionRadius, elapsedTime / 2f);
+
             elapsedTime += Time.deltaTime;
+
+            // Damage enemies within the updated radius
+            DamageEnemiesInRadius();
+
             yield return null;
         }
 
-        DamageEnemiesInRadius();
         StartCoroutine(OnMyDestroy(2f));
     }
 
     private void DamageEnemiesInRadius()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
-
         for (int i = 0;i< enemies.Count();++i)
         {
             if (enemies[i].CompareTag("Enemy"))

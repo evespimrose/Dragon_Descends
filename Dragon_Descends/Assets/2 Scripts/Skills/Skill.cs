@@ -19,7 +19,7 @@ public class Skill : MonoBehaviour
     public float duration = 5f;
     private float detectionRadius = 12.9f;
 
-    protected void Start()
+    protected virtual void Start()
     {
         StartCoroutine(CannonAim());
         StartCoroutine(AutoFire());
@@ -57,7 +57,7 @@ public class Skill : MonoBehaviour
         return closestEnemy;
     }
 
-    private void FireProjectileAtClosestEnemy()
+    protected virtual void FireProjectileAtClosestEnemy()
     {
         Transform closestEnemy = SeekClosestEnemy();
         if (closestEnemy != null)

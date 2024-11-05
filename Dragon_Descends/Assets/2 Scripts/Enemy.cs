@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
     public GameObject rendererObject;
     private SpriteRenderer spriteRenderer;
 
-    private float baseExperiencePerKill = 5f;
+    private float baseExperiencePerKill = 1f;
     private float experienceGainRate = 1f;
     public float hp = 1;
     private bool isAlive = true;
@@ -24,8 +24,7 @@ public class Enemy : MonoBehaviour
     {
         spriteRenderer = rendererObject.GetComponent<SpriteRenderer>();
         OnDestroyed += () => {
-            if(!CharacterManager.Instance.player.isMaxLv)
-                CharacterManager.Instance.player.GainExperience(Mathf.Round(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 10)) / 10f);
+           
         };
     }
 
@@ -66,8 +65,10 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator OnDeath()
     {
+        if (!CharacterManager.Instance.player.IsMaxLv)
+            //  + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 20) / 10f
+            CharacterManager.Instance.player.GainExperience(baseExperiencePerKill);
         isAlive = false;
-        print("OnDeath!");
         CharacterManager.Instance.enemies.Remove(this);
         gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
         gameObject.GetComponent<Enemy>().enabled = false;
@@ -85,9 +86,7 @@ public class Enemy : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            //GameEnd
-
-            //print("플레이어 죽음!");
+            CharacterManager.Instance.player.OnDeath();
         }
     }
 

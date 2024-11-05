@@ -27,9 +27,8 @@ public class Projectile : MonoBehaviour
     {
         if (collision.CompareTag("Enemy"))
         {
-            print("총알 적한테 맞음! ");
             collision.GetComponent<Enemy>().TakeDamage(damage);
-            StartCoroutine(OnMyDestroy(0f));
+            StartCoroutine(OnMyDestroy());
         }
     }
 
@@ -48,7 +47,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public virtual IEnumerator OnMyDestroy(float duration)
+    public virtual IEnumerator OnMyDestroy(float duration = 0f)
     {
         yield return new WaitForSeconds(duration);
         Destroy(gameObject);

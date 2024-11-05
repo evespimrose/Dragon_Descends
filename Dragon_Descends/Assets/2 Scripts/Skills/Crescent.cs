@@ -1,18 +1,25 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Crescent : Skill
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        
+        fireRate = 0.3f;
+        base.Start();
     }
-
-    // Update is called once per frame
-    void Update()
+    protected override void FireProjectileAtClosestEnemy()
     {
-        
+        Transform closestEnemy = SeekClosestEnemy();
+        if (closestEnemy != null)
+        {
+            CrescentProjectile projectile = Instantiate(Resources.Load<CrescentProjectile>("CrescentProjectile"), transform.position, Quaternion.identity);
+            projectile.transform.SetLocalPositionAndRotation(transform.position, transform.rotation);
+
+            projectile.transform.up = closestEnemy.position - transform.position;
+            projectile.transform.localScale *= projectileSize;
+            projectile.duration = 5f;
+            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);
+        }
     }
 }

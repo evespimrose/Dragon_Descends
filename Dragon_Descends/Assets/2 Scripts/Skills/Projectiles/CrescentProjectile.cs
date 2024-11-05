@@ -1,18 +1,22 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CrescentProjectile : MonoBehaviour
+public class CrescentProjectile : Projectile
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private int hitCount = 3;
 
-    // Update is called once per frame
-    void Update()
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.CompareTag("Enemy"))
+        {
+            collision.GetComponent<Enemy>().TakeDamage(damage);
+            hitCount--;
+
+            if (hitCount <= 0)
+            {
+                StartCoroutine(OnMyDestroy());
+            }
+        }
     }
 }
+

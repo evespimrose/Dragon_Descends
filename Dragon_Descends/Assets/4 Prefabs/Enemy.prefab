@@ -84,7 +84,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  moveSpeed: 3.5
+  moveSpeed: 0.7
   rendererObject: {fileID: 6094957551399403774}
   hp: 0
   animator: {fileID: 7307545256725336924}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c45006694a049db4eb169ae407547935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3.5
+  moveSpeed: 0.7
   hp: 1
   damage: 1
   dropExp: 1

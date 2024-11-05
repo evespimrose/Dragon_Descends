@@ -7,17 +7,20 @@ public class CharacterManager : SingletonManager<CharacterManager>
     public Player player;
 
     public List<Enemy> enemies;
+    public List<Bush> Bushes;
 
     [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private Bush bushPrefab;
 
     private float spawnDelay = 0.5f;
     private int enemySpawnCount = 10;
 
-    Vector2 minMaxDist = new Vector2(15, 17f);
+    Vector2 minMaxDist = new(40f, 46f);
 
     private void Start()
     {
         StartCoroutine(SpawnEnemies());
+        SpawnBushes();
     }
 
     private IEnumerator SpawnEnemies()
@@ -31,7 +34,7 @@ public class CharacterManager : SingletonManager<CharacterManager>
 
                 bool isPositionValid = false;
                 int attemptCount = 0;
-                while (!isPositionValid && attemptCount < 10) // 최대 10번까지 위치 재설정 시도
+                while (!isPositionValid && attemptCount < 10)
                 {
                     isPositionValid = true;
                     for (int j = 0; j < enemies.Count; j++)
@@ -54,6 +57,31 @@ public class CharacterManager : SingletonManager<CharacterManager>
             }
 
             yield return new WaitForSeconds(spawnDelay);
+        }
+    }
+
+    private void SpawnBushes()
+    {
+        while (Bushes.Count < 500)
+        {
+            Vector2 spawnPos = new Vector2(Random.Range(-450f, 450f), Random.Range(-180f, 180f));
+
+            bool isPositionValid = true;
+
+            foreach (Bush bush in Bushes)
+            {
+                if (Vector2.Distance(spawnPos, bush.transform.position) < 5f)
+                {
+                    isPositionValid = false;
+                    break;
+                }
+            }
+
+            if (isPositionValid)
+            {
+                Bush newBush = Instantiate(Resources.Load<Bush>("Bush"), spawnPos, Quaternion.identity);
+                Bushes.Add(newBush);
+            }
         }
     }
 
