@@ -8,7 +8,7 @@ public class Bomber : Skill
     protected override IEnumerator AutoFire()
     {
         isFiring = true;
-        while (true)
+        while (isFiring)
         {
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitForSeconds(fireRate);

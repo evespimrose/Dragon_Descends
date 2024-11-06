@@ -5,7 +5,7 @@ using UnityEngine;
 public class Skill : MonoBehaviour
 {
     public float fireRate = 1f;
-    protected bool isFiring = false;
+    public bool isFiring = false;
 
     public float damageMultiplier = 1f;
     public float projectileSpeed = 5f;
@@ -28,7 +28,7 @@ public class Skill : MonoBehaviour
     protected virtual IEnumerator AutoFire()
     {
         isFiring = true;
-        while (true)
+        while (isFiring)
         {
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitForSeconds(fireRate);

@@ -17,6 +17,11 @@ public class Player : MonoBehaviour
     public int level;
     public int damage = 1;
 
+    private bool isAlive = true;
+
+    public SpriteRenderer Head;
+    public SpriteRenderer DeadHead;
+
     public float ExpRequired
     {
         get
@@ -63,7 +68,11 @@ public class Player : MonoBehaviour
         stat = GetComponent<PlayerStat>();
         Target = transform.position;
         UpdateStats();
+
+        Head.gameObject.SetActive(true);
+        DeadHead.gameObject.SetActive(false);
     }
+
     private void Start()
     {
         BindBodyParts();
@@ -79,17 +88,25 @@ public class Player : MonoBehaviour
 
     private void PlayerInput()
     {
-        if (Input.GetMouseButton(0))
+        if (isAlive)
         {
-            Vector3 mousePosition = Input.mousePosition;
-            mousePosition.z = 10.0f;
-            Target = Camera.main.ScreenToWorldPoint(mousePosition);
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 mousePosition = Input.mousePosition;
+                mousePosition.z = 10.0f;
+                Target = Camera.main.ScreenToWorldPoint(mousePosition);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                Target = transform.position;
+            }
         }
-        else if (Input.GetMouseButtonUp(0))
+        else
         {
             Target = transform.position;
         }
-        if(Input.GetKeyDown(KeyCode.Q))
+
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             LevelUp();
         }
@@ -98,7 +115,7 @@ public class Player : MonoBehaviour
     private void Move()
     {
         Vector2 currentPosition = transform.position;
-        if ((Vector2)Target != currentPosition)
+        if ((Vector2)Target != currentPosition && isAlive)
         {
             Vector2 direction = (Target - currentPosition).normalized;
             transform.position = Vector2.MoveTowards(currentPosition, Target, moveSpeed * Time.deltaTime);
@@ -110,7 +127,6 @@ public class Player : MonoBehaviour
         hp = stat.hp;
         moveSpeed = stat.moveSpeed;
     }
-
 
     public void BindBodyParts()
     {
@@ -156,9 +172,10 @@ public class Player : MonoBehaviour
             return;
         }
 
-        experience += exp;
+        if (isAlive)
+            experience += exp;
 
-        if (!IsMaxLv && experience >= Requiredexp(level + 1, 0))
+        if (!IsMaxLv && experience >= Requiredexp(level + 1, 0) && isAlive)
         {
             LevelUp();
         }
@@ -166,7 +183,7 @@ public class Player : MonoBehaviour
 
     public void LevelUp()
     {
-        if (IsMaxLv) return;
+        if (IsMaxLv && !isAlive) return;
 
         level++;
         UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
@@ -174,7 +191,6 @@ public class Player : MonoBehaviour
 
         UIManager.Instance.GameSkillLevelUpPauseResume();
     }
-
 
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -201,6 +217,7 @@ public class Player : MonoBehaviour
             }
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Projectile") && collision.TryGetComponent<BombProjectile>(out BombProjectile bombProjectile))
@@ -226,8 +243,41 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    public void OnDeath()
+    {
+        StartCoroutine(HandleDeath());
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        isAlive = false;
+
+        foreach (BodyPart part in parts)
+        {
+            if (part.TryGetComponent<Skill>(out Skill skill))
+            {
+                skill.isFiring = false;
+            }
+        }
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+
+        Head.gameObject.SetActive(false);
+        DeadHead.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.GameOverPauseResume();
+    }
+
     public void ResetPlayer()
     {
+        isAlive = true;
+
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
 
@@ -247,10 +297,19 @@ public class Player : MonoBehaviour
         tail.ChangeChaseBodyPart(parts[0].gameObject);
         parts[0].transform.position = transform.position;
         tail.transform.position = transform.position;
-    }
 
-    public void OnDeath()
-    {
-        UIManager.Instance.GameOverPauseResume();
+        if (parts[0].TryGetComponent<Skill>(out Skill skill))
+        {
+            skill.isFiring = true;
+        }
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = true;
+        }
+
+        Head.gameObject.SetActive(true);
+        DeadHead.gameObject.SetActive(false);
     }
 }

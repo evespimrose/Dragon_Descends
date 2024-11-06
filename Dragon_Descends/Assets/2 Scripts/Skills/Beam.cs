@@ -10,12 +10,13 @@ public class Beam : Skill
     {
         fireRate = 7f;
         StartCoroutine(CannonAim());
-        StartCoroutine(FireBeam());
+        StartCoroutine(AutoFire());
     }
 
-    private IEnumerator FireBeam()
+    protected override IEnumerator AutoFire()
     {
-        while (true)
+        isFiring = true;
+        while (isFiring)
         {
 
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
