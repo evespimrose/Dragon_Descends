@@ -17,34 +17,46 @@ public class Player : MonoBehaviour
     public int level;
     public int damage = 1;
 
-    public float ExpRequired 
-    { get 
+    public float ExpRequired
+    {
+        get
         {
             return level switch
             {
                 0 => 100,
-                1 => 100,
-                2 => 500,
-                3 => 1500,
-                _ => (float)0
+                1 => 500,
+                2 => 1500,
+                _ => 0f // assuming levels above 3 are not used
             };
-        } 
+        }
     }
-    //=> IsMaxLv ? 1f : (experience - Requiredexp(level - 1 , 0)) / ExpRequired;
+
     public float ExpAmount
     {
         get
         {
             if (IsMaxLv)
                 return 1f;
-            else if (level == 0)
-                return experience / ExpRequired;
-            else
-                return (experience - Requiredexp(level, 0)) / ExpRequired;
+
+            float currentLevelRequirement = Requiredexp(level, 0);
+            float nextLevelRequirement = Requiredexp(level + 1, 0);
+            return (experience - currentLevelRequirement) / (nextLevelRequirement - currentLevelRequirement);
         }
     }
 
-    public bool IsMaxLv {  get { return level > 3; } }
+    private int Requiredexp(int lv, int cumulativeExp)
+    {
+        return lv switch
+        {
+            0 => cumulativeExp,
+            1 => Requiredexp(lv - 1, cumulativeExp + 100),
+            2 => Requiredexp(lv - 1, cumulativeExp + 500),
+            3 => Requiredexp(lv - 1, cumulativeExp + 1500),
+            _ => cumulativeExp
+        };
+    }
+
+    public bool IsMaxLv => level >= 3;
 
     private void Awake()
     {
@@ -99,20 +111,6 @@ public class Player : MonoBehaviour
         moveSpeed = stat.moveSpeed;
     }
 
-    public void LevelUp()
-    {
-        if (IsMaxLv) return;
-
-        level++;
-        UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
-        if (level < 3)
-            UIManager.Instance.nextLeveltext.text = "Lv." + (level + 1).ToString();
-        else
-            UIManager.Instance.nextLeveltext.text = "MaxLevel";
-
-        UIManager.Instance.GameSkillLevelUpPauseResume();
-    }
-
 
     public void BindBodyParts()
     {
@@ -154,33 +152,27 @@ public class Player : MonoBehaviour
     {
         if (IsMaxLv)
         {
-            experience = ExpRequired;
+            experience = Requiredexp(level, 0);
             return;
         }
 
         experience += exp;
-        if (!IsMaxLv && (experience - Requiredexp(level - 1, 0)) >= ExpRequired)
+
+        if (!IsMaxLv && experience >= Requiredexp(level + 1, 0))
         {
             LevelUp();
         }
     }
 
-
-    private int Requiredexp(int lv, int result)
+    public void LevelUp()
     {
-        switch(lv+1)
-        {
-            case 0: return result;
-            case 1:
-                result += 100;
-                return Requiredexp(lv - 1, result);
-            case 2:
-                result += 500;
-                return Requiredexp(lv - 1, result);
-            default:
-                result += 1500;
-                return Requiredexp(lv - 1, result);
-        }
+        if (IsMaxLv) return;
+
+        level++;
+        UIManager.Instance.currLeveltext.text = "Lv." + level.ToString();
+        UIManager.Instance.nextLeveltext.text = level < 3 ? "Lv." + (level + 1).ToString() : "MaxLevel";
+
+        UIManager.Instance.GameSkillLevelUpPauseResume();
     }
 
 
