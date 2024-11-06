@@ -69,11 +69,9 @@ public class UIManager : SingletonManager<UIManager>
 
     private void PauseResume()
     {
-        //print("PauseResume" + isLevelUp);
         isLevelUp = !isLevelUp;
         levelUpPanel.gameObject.SetActive(isLevelUp);
         Time.timeScale = isPaused ? 0f : 1.0f;
-        //print("PauseResume" + isLevelUp);
     }
 
     public void GameOverPauseResume()
@@ -184,11 +182,10 @@ public class UIManager : SingletonManager<UIManager>
         Player p = CharacterManager.Instance.player;
         SelectedSkills[p.level - 1].sprite = SkillSpriteList[0];
         SelectedSkills[p.level - 1].color = Color.red;
-        RectTransform skillRectTransform = SelectedSkills[p.level - 1].GetComponentInParent<RectTransform>();
-        if (skillRectTransform != null)
-        {
-            skillRectTransform.localScale = new Vector3(8.5f, 8.5f, 8.5f);
-        }
+        Color color = SelectedSkills[p.level - 1].color;
+        color.a = 1.0f;
+        SelectedSkills[p.level - 1].color = color;
+
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
@@ -301,11 +298,22 @@ public class UIManager : SingletonManager<UIManager>
         Player player = CharacterManager.Instance.player;
         player.ResetPlayer();
 
+        foreach (var skillImage in SelectedSkills)
+        {
+            skillImage.sprite = null;
+            Color color = Color.white;
+            color.a = 0f;
+            skillImage.color = color;
+        }
+
+        SkillIndexList.Clear();
+        for (int i = 0; i < 4; ++i)
+            SkillIndexList.Add(i);
+
         isPaused = false;
         gameOverPanel.gameObject.SetActive(false);
         Time.timeScale = 1.0f;
     }
-
 
     public void GameQuit()
     {
