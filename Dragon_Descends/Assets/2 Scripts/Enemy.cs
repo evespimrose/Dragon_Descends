@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Enemy : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class Enemy : MonoBehaviour
     public event EventHandler OnDestroyed;
 
     public Animator animator;
+
+    
 
     private void Start()
     {
@@ -67,7 +70,7 @@ public class Enemy : MonoBehaviour
     {
         if (!CharacterManager.Instance.player.IsMaxLv)
             //  + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 20) / 10f
-            CharacterManager.Instance.player.GainExperience(baseExperiencePerKill);
+            CharacterManager.Instance.player.GainExperience(baseExperiencePerKill + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 20) / 10f);
         isAlive = false;
         CharacterManager.Instance.enemies.Remove(this);
         gameObject.GetComponent<CapsuleCollider2D>().enabled = false;

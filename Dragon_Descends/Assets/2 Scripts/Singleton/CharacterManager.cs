@@ -37,6 +37,14 @@ public class CharacterManager : SingletonManager<CharacterManager>
                 while (!isPositionValid && attemptCount < 10)
                 {
                     isPositionValid = true;
+
+                    if (spawnPos.x < -450 || spawnPos.x > 450 || spawnPos.y < -180 || spawnPos.y > 180)
+                    {
+                        spawnPos = (ranPos * (minMaxDist.y - minMaxDist.x)) + (ranPos.normalized * minMaxDist.x);
+                        attemptCount++;
+                        continue;
+                    }
+
                     for (int j = 0; j < enemies.Count; j++)
                     {
                         float distance = Vector2.Distance(spawnPos + (Vector2)player.transform.position, enemies[j].transform.position);
@@ -51,6 +59,11 @@ public class CharacterManager : SingletonManager<CharacterManager>
                     attemptCount++;
                 }
 
+                // 유효한 위치가 아니면 생성하지 않음
+                if (!isPositionValid)
+                    continue;
+
+                // 적을 생성하고 리스트에 추가
                 Enemy newEnemy = Instantiate(enemyPrefab, (Vector2)player.transform.position + spawnPos, Quaternion.Euler(0, 0, -90));
                 enemies.Add(newEnemy);
                 newEnemy.GetComponent<Enemy>().OnDestroyed += () => enemies.Remove(newEnemy);
@@ -59,6 +72,7 @@ public class CharacterManager : SingletonManager<CharacterManager>
             yield return new WaitForSeconds(spawnDelay);
         }
     }
+
 
     private void SpawnBushes()
     {

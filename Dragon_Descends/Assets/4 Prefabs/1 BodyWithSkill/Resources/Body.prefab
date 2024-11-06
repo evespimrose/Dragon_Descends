@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4524967346047014380}
   - component: {fileID: 2896564136605072295}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 7304283917159598359}
   - component: {fileID: 8004136733308143669}
   - component: {fileID: 6839386780307525614}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6793591283162687657}
   - component: {fileID: 3151915116876599494}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

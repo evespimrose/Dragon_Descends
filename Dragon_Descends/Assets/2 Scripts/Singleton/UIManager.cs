@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Unity.VisualScripting;
 
 public class UIManager : SingletonManager<UIManager>
 {
@@ -30,6 +31,7 @@ public class UIManager : SingletonManager<UIManager>
 
     public List<Sprite> SkillSpriteList = new(4);
 
+    public List<SpriteRenderer> SelectedSkills;
     private void Start()
     {
         pauseButton.onClick.AddListener(() => { GamePauseResume(); });
@@ -179,8 +181,14 @@ public class UIManager : SingletonManager<UIManager>
 
     private void OnClickBeam() 
     {
-        print("ºûÁÙ±â" + isPaused);
         Player p = CharacterManager.Instance.player;
+        SelectedSkills[p.level - 1].sprite = SkillSpriteList[0];
+        SelectedSkills[p.level - 1].color = Color.red;
+        RectTransform skillRectTransform = SelectedSkills[p.level - 1].GetComponentInParent<RectTransform>();
+        if (skillRectTransform != null)
+        {
+            skillRectTransform.localScale = new Vector3(8.5f, 8.5f, 8.5f);
+        }
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
@@ -203,6 +211,12 @@ public class UIManager : SingletonManager<UIManager>
         print("ÆøÅº" + isPaused);
 
         Player p = CharacterManager.Instance.player;
+        SelectedSkills[p.level - 1].sprite = SkillSpriteList[1];
+        RectTransform skillRectTransform = SelectedSkills[p.level - 1].GetComponentInParent<RectTransform>();
+        if (skillRectTransform != null)
+        {
+            skillRectTransform.localScale = new Vector3(9.6f, 9.6f, 9.6f);
+        }
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
@@ -225,6 +239,12 @@ public class UIManager : SingletonManager<UIManager>
         print("ÃÊ½Â´Þ" + isPaused);
 
         Player p = CharacterManager.Instance.player;
+        SelectedSkills[p.level - 1].sprite = SkillSpriteList[2];
+        RectTransform skillRectTransform = SelectedSkills[p.level - 1].GetComponentInParent<RectTransform>();
+        if (skillRectTransform != null)
+        {
+            skillRectTransform.localScale = new Vector3(4.5f, 4.5f, 4.5f);
+        }
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
@@ -247,6 +267,12 @@ public class UIManager : SingletonManager<UIManager>
         print("±¼··¼è" + isPaused);
 
         Player p = CharacterManager.Instance.player;
+        SelectedSkills[p.level - 1].sprite = SkillSpriteList[3];
+        RectTransform skillRectTransform = SelectedSkills[p.level - 1].GetComponentInParent<RectTransform>();
+        if (skillRectTransform != null)
+        {
+            skillRectTransform.localScale = new Vector3(5f, 5f, 5f);
+        }
         BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
