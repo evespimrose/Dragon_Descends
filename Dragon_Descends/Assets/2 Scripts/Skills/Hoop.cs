@@ -7,6 +7,7 @@ public class Hoop : Skill
 
     protected override IEnumerator AutoFire()
     {
+        fireRate = 0.5f;
         isFiring = true;
         while (isFiring)
         {
