@@ -29,9 +29,8 @@ public class Skill : MonoBehaviour
     protected virtual IEnumerator AutoFire()
     {
         isFiring = true;
-        while (true)
+        while (isFiring)
         {   
-            yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitForSeconds(fireRate);
 
