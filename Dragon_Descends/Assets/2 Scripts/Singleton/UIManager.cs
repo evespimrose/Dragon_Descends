@@ -74,9 +74,17 @@ public class UIManager : SingletonManager<UIManager>
         Time.timeScale = isPaused ? 0f : 1.0f;
     }
 
-    public void GameOverPauseResume()
+    public void GameOverPauseResume(bool flag = true)
     {
         isGameOver = !isGameOver;
+        if (flag)
+        {
+            gameOverPanel.messageText.text = "Game Over......";
+        }
+        else
+        {
+            gameOverPanel.messageText.text = "Game Clear!!!!!";
+        }
         gameOverPanel.gameObject.SetActive(isGameOver);
         Time.timeScale = isGameOver ? 0f : 1.0f;
     }

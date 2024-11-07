@@ -42,9 +42,13 @@ public class GameManager : SingletonManager<GameManager>
             CharacterManager.Instance.SetWave(1f, 20);
         }
         // 10분 이후 1초당 50마리 생성
-        else if (timeSinceStart > 600f)
+        else if (timeSinceStart > 600f && timeSinceStart <= 900f)
         {
             CharacterManager.Instance.SetWave(1f, 50);
+        }
+        else if(timeSinceStart > 900f)
+        {
+            UIManager.Instance.GameOverPauseResume(false);
         }
     }
 
