@@ -3907,11 +3907,11 @@ RectTransform:
   m_Children:
   - {fileID: 796310032}
   - {fileID: 497917691}
+  - {fileID: 418762932}
   - {fileID: 923263095}
   - {fileID: 709493182}
   - {fileID: 1306815083}
   - {fileID: 1371176717}
-  - {fileID: 418762932}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5079,6 +5079,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reStartButton: {fileID: 1087369772}
   quitButton: {fileID: 1491205113}
+  messageText: {fileID: 1559660830}
 --- !u!1 &1372054939
 GameObject:
   m_ObjectHideFlags: 0
@@ -6660,6 +6661,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4524967346047014380, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 5295549157749762597, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
       propertyPath: m_Name
       value: Body1
@@ -6667,6 +6672,14 @@ PrefabInstance:
     - target: {fileID: 5295549157749762597, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6793591283162687657, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6793591283162687657, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6839386780307525614, guid: 852a2817f6b9e8546a4b48e24cc94ba5, type: 3}
       propertyPath: m_ConnectedRigidBody

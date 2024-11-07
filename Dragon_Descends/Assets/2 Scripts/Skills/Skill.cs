@@ -19,6 +19,7 @@ public class Skill : MonoBehaviour
     public float duration = 5f;
     private float detectionRadius = 12.9f;
 
+    public float Offset = -0.7f;
     protected virtual void Start()
     {
         StartCoroutine(CannonAim());
@@ -28,8 +29,9 @@ public class Skill : MonoBehaviour
     protected virtual IEnumerator AutoFire()
     {
         isFiring = true;
-        while (isFiring)
-        {
+        while (true)
+        {   
+            yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
             yield return new WaitForSeconds(fireRate);
 
@@ -68,7 +70,7 @@ public class Skill : MonoBehaviour
             projectile.transform.up = closestEnemy.position - transform.position;
             projectile.transform.localScale *= projectileSize;
             projectile.duration = 5f;
-            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);
+            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed);
         }
     }
 
@@ -77,14 +79,15 @@ public class Skill : MonoBehaviour
         while (true)
         {
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
+
             Transform closestEnemy = SeekClosestEnemy();
-        if (closestEnemy != null)
+            if (closestEnemy != null)
             {
-                Vector2 direction = closestEnemy.position - Cannon.transform.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                Cannon.transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+                Cannon.transform.up = closestEnemy.position - Cannon.transform.position;
             }
         }
     }
+
+
 
 }
