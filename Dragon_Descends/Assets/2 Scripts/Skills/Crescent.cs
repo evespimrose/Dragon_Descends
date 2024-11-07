@@ -19,7 +19,7 @@ public class Crescent : Skill
             projectile.transform.up = closestEnemy.position - transform.position;
             projectile.transform.localScale *= projectileSize;
             projectile.duration = 5f;
-            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);
+            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 5f);
         }
     }
 }

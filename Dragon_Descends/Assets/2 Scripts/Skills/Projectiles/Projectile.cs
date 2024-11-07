@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     protected float damage = 1;
 
-    [SerializeField] protected float moveSpeed = 5f;
+    [SerializeField] protected float moveSpeed = 0f;
     public float duration = 5f;
 
     protected virtual void Start()
@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
     }
     public void Move(Vector2 dir)
     {
-        transform.Translate((moveSpeed) * Time.deltaTime * dir);
+        transform.Translate(moveSpeed * Time.deltaTime * dir);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
@@ -34,8 +34,8 @@ public class Projectile : MonoBehaviour
 
     public void SetStats(float damagemul, float movemul)
     {
-        damage *= damagemul;
-        moveSpeed *= movemul;
+        damage += damagemul;
+        moveSpeed += movemul;
     }
 
     public void IgnoreCollisionWith(Enemy enemy)

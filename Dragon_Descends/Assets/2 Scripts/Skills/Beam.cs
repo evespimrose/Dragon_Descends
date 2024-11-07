@@ -16,9 +16,9 @@ public class Beam : Skill
     {
         fireRate = 0.909f;
         isFiring = true;
-        while (isFiring)
+        while (true)
         {
-
+            yield return new WaitUntil(() => isFiring);
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
             
 

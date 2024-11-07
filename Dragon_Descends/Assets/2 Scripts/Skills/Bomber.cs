@@ -5,32 +5,25 @@ public class Bomber : Skill
 {
     [SerializeField] private BombProjectile bombProjectilePrefab;
 
-    protected override IEnumerator AutoFire()
+
+    protected override void Start()
     {
         fireRate = 0.796f;
-        isFiring = true;
-        while (isFiring)
-        {
-            yield return new WaitUntil(() => SeekClosestEnemy() != null);
-            yield return new WaitForSeconds(fireRate);
-
-            FireBombProjectileAtClosestEnemy();
-        }
+        base.Start();
     }
 
-    private void FireBombProjectileAtClosestEnemy()
+    protected override void FireProjectileAtClosestEnemy()
     {
         Transform closestEnemy = SeekClosestEnemy();
         if (closestEnemy != null)
         {
-            // Instantiate and configure the BombProjectile
             BombProjectile bombProjectile = Instantiate(Resources.Load<BombProjectile>("BombProjectile"), transform.position, Quaternion.identity);
             bombProjectile.transform.SetLocalPositionAndRotation(transform.position, transform.rotation);
 
             bombProjectile.transform.up = closestEnemy.position - transform.position;
             bombProjectile.transform.localScale *= projectileSize;
-            bombProjectile.duration = 5f;  // Set custom duration if needed
-            bombProjectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, 1f);  // Apply skill's damage multiplier
+            bombProjectile.duration = 5f;
+            bombProjectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 3f);
         }
     }
 }
