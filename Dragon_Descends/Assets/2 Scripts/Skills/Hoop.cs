@@ -16,10 +16,12 @@ public class Hoop : Skill
         Transform closestEnemy = SeekClosestEnemy();
         if (closestEnemy != null)
         {
-            HoopProjectile hoopProjectile = Instantiate(Resources.Load<HoopProjectile>("HoopProjectile"), transform.position, Quaternion.identity);
+            HoopProjectile hoopProjectile = 
+                Instantiate(Resources.Load<HoopProjectile>("HoopProjectile"), 
+                transform.position, Quaternion.identity);
             hoopProjectile.transform.up = closestEnemy.position - transform.position;
-            //hoopProjectile.transform.localScale *= 1.2f;
-            hoopProjectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 3f);
+            hoopProjectile.
+                SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 3f);
         }
     }
 }

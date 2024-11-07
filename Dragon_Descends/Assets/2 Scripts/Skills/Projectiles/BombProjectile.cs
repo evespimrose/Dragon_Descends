@@ -34,15 +34,12 @@ public class BombProjectile : Projectile
 
         while (elapsedTime < 2f)
         {
-            // Interpolate the scale for the explosion effect
             transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsedTime / 2f);
 
-            // Update the circleCollider radius proportionally to the local scale's x component
             circleCollider.radius = Mathf.Lerp(originalRadius, explosionRadius, elapsedTime / 2f);
 
             elapsedTime += Time.deltaTime;
 
-            // Damage enemies within the updated radius
             DamageEnemiesInRadius();
 
             yield return null;

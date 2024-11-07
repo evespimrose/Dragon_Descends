@@ -14,7 +14,6 @@ public class HoopProjectile : Projectile
             hasHitEnemy = true;
             initialHitEnemy = collision.GetComponent<Enemy>();
 
-            // Inflict damage to the first hit enemy
             initialHitEnemy.TakeDamage(damage);
 
             SpawnSplitProjectiles();
@@ -30,7 +29,9 @@ public class HoopProjectile : Projectile
             float angle = 360f / splitProjectileCount * i;
             Vector2 direction = Quaternion.Euler(0, 0, angle) * Vector2.up;
 
-            Projectile splitProjectile = Instantiate(Resources.Load<Projectile>("Projectile"), transform.position, Quaternion.identity);
+            Projectile splitProjectile = 
+                Instantiate(Resources.Load<Projectile>("Projectile"), 
+                transform.position, Quaternion.identity);
             splitProjectile.transform.up = direction;
             splitProjectile.transform.localScale *= 0.7f;
             splitProjectile.SetStats(damage, 1f);

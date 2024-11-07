@@ -20,7 +20,7 @@ public class GameManager : SingletonManager<GameManager>
 
     private void Update()
     {
-        timeSinceStart = Time.time;
+        timeSinceStart += Time.deltaTime;
         WaveController();
     }
 
@@ -48,9 +48,27 @@ public class GameManager : SingletonManager<GameManager>
         }
         else if(timeSinceStart > 900f)
         {
-            UIManager.Instance.GameOverPauseResume(false);
+            StartCoroutine(InitiateClear());
         }
     }
+    private IEnumerator InitiateClear()
+    {
+        Player p = CharacterManager.Instance.player;
 
+        foreach (BodyPart part in p.parts)
+        {
+            if (part.TryGetComponent<Skill>(out Skill skill))
+            {
+                skill.isFiring = false;
+            }
+        }
+
+        if (p.TryGetComponent<Collider2D>(out var collider))
+        {
+            collider.enabled = false;
+        }
+        yield return new WaitForSeconds(2f);
+        UIManager.Instance.GameOverPauseResume(false);
+    }
     
 }

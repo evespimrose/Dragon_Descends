@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     public int damage = 1;
 
     private bool isAlive = true;
+    public bool p_isAlive => isAlive;
 
     public SpriteRenderer Head;
     public SpriteRenderer DeadHead;
@@ -31,7 +32,7 @@ public class Player : MonoBehaviour
                 0 => 100,
                 1 => 500,
                 2 => 1500,
-                _ => 0f // assuming levels above 3 are not used
+                _ => 0f
             };
         }
     }
@@ -104,11 +105,6 @@ public class Player : MonoBehaviour
         else
         {
             Target = transform.position;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            LevelUp();
         }
     }
 

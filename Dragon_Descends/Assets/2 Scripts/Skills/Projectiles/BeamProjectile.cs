@@ -8,8 +8,6 @@ public class BeamProjectile : Projectile
     private HashSet<Enemy> enemiesInContact = new HashSet<Enemy>();
     private float damagePerFrame = 0.1f;
     private Transform sourceSkill;
-
-    // Initialize the beam with the initial direction and Skill reference
     public void Initialize(Vector2 direction, Transform skill)
     {
         fixedDirection = direction.normalized;

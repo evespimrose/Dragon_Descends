@@ -27,8 +27,10 @@ public class CharacterManager : SingletonManager<CharacterManager>
     {
         while (true)
         {
+            // 몬스터 스폰수만큼 생성
             for (int i = 0; i < enemySpawnCount; i++)
             {
+                // 생성 좌표 탐색
                 Vector2 ranPos = Random.insideUnitCircle;
                 Vector2 spawnPos = (ranPos * (minMaxDist.y - minMaxDist.x)) + (ranPos.normalized * minMaxDist.x);
 
@@ -37,14 +39,14 @@ public class CharacterManager : SingletonManager<CharacterManager>
                 while (!isPositionValid && attemptCount < 10)
                 {
                     isPositionValid = true;
-
-                    if (spawnPos.x < -450 || spawnPos.x > 450 || spawnPos.y < -180 || spawnPos.y > 180)
+                    // 맵 바깥에선 생성 불가
+                    if (spawnPos.x < Map.Instance.minX || spawnPos.x > Map.Instance.maxX || spawnPos.y < Map.Instance.minY || spawnPos.y > Map.Instance.maxY)
                     {
                         spawnPos = (ranPos * (minMaxDist.y - minMaxDist.x)) + (ranPos.normalized * minMaxDist.x);
                         attemptCount++;
                         continue;
                     }
-
+                    // 몬스터 주위엔 생성 불가
                     for (int j = 0; j < enemies.Count; j++)
                     {
                         float distance = Vector2.Distance(spawnPos + (Vector2)player.transform.position, enemies[j].transform.position);
@@ -59,16 +61,14 @@ public class CharacterManager : SingletonManager<CharacterManager>
                     attemptCount++;
                 }
 
-                // 유효한 위치가 아니면 생성하지 않음
                 if (!isPositionValid)
                     continue;
-
-                // 적을 생성하고 리스트에 추가
+                // 몬스터 생성
                 Enemy newEnemy = Instantiate(enemyPrefab, (Vector2)player.transform.position + spawnPos, Quaternion.Euler(0, 0, -90));
                 enemies.Add(newEnemy);
                 newEnemy.GetComponent<Enemy>().OnDestroyed += () => enemies.Remove(newEnemy);
             }
-
+            // 다음 생성 주기까지 대기
             yield return new WaitForSeconds(spawnDelay);
         }
     }
@@ -78,7 +78,7 @@ public class CharacterManager : SingletonManager<CharacterManager>
     {
         while (Bushes.Count < 500)
         {
-            Vector2 spawnPos = new Vector2(Random.Range(-450f, 450f), Random.Range(-180f, 180f));
+            Vector2 spawnPos = new Vector2(Random.Range(Map.Instance.minX, Map.Instance.maxX), Random.Range(Map.Instance.minY, Map.Instance.maxY));
 
             bool isPositionValid = true;
 

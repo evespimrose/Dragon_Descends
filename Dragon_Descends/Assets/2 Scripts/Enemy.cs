@@ -70,7 +70,8 @@ public class Enemy : MonoBehaviour
     {
         if (!CharacterManager.Instance.player.IsMaxLv)
             //  + (GameManager.Instance.timeSinceStart / 5f * experienceGainRate * 20) / 10f
-            CharacterManager.Instance.player.GainExperience(baseExperiencePerKill);
+            CharacterManager.Instance.player.GainExperience(baseExperiencePerKill);     
+
         isAlive = false;
         CharacterManager.Instance.enemies.Remove(this);
         gameObject.GetComponent<CapsuleCollider2D>().enabled = false;

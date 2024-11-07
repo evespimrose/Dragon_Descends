@@ -13,13 +13,16 @@ public class Crescent : Skill
         Transform closestEnemy = SeekClosestEnemy();
         if (closestEnemy != null)
         {
-            CrescentProjectile projectile = Instantiate(Resources.Load<CrescentProjectile>("CrescentProjectile"), transform.position, Quaternion.identity);
+            CrescentProjectile projectile = 
+                Instantiate(Resources.Load<CrescentProjectile>("CrescentProjectile"), 
+                transform.position, Quaternion.identity);
             projectile.transform.SetLocalPositionAndRotation(transform.position, transform.rotation);
 
             projectile.transform.up = closestEnemy.position - transform.position;
             projectile.transform.localScale *= projectileSize;
             projectile.duration = 5f;
-            projectile.SetStats(CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 5f);
+            projectile.SetStats
+                (CharacterManager.Instance.player.damage * damageMultiplier, projectileSpeed + 5f);
         }
     }
 }

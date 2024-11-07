@@ -9,16 +9,27 @@ public class ChaseCam : MonoBehaviour
     public float followSpeed = 5f;    // 카메라가 따라가는 속도
 
     private bool startFollowing = false;
+    private bool isCheckingMovement = false; // 이동 상태 검사 여부
 
     private void Start()
     {
         followSpeed = CharacterManager.Instance.player.moveSpeed;
-        StartCoroutine(StartFollowingAfterDelay());
     }
 
     private void Update()
     {
         followSpeed = CharacterManager.Instance.player.moveSpeed;
+
+        // 플레이어의 이동이 시작되었는지 확인
+        if ((Vector2)CharacterManager.Instance.transform.position != CharacterManager.Instance.player.Target)
+        {
+            if (!isCheckingMovement)
+            {
+                isCheckingMovement = true;
+                StartCoroutine(StartFollowingAfterDelay()); // 이동 시작 후 딜레이 적용
+            }
+        }
+
         if (startFollowing)
         {
             FollowPlayer();
@@ -27,8 +38,11 @@ public class ChaseCam : MonoBehaviour
 
     private IEnumerator StartFollowingAfterDelay()
     {
-        yield return new WaitForSeconds(followDelay);
-        startFollowing = true;
+        startFollowing = false; // 일단 따라가기 중지
+        yield return new WaitForSeconds(followDelay); // 딜레이 적용
+
+        startFollowing = true; // 딜레이 후 따라가기 시작
+        isCheckingMovement = false; // 이동 상태 재검사 허용
     }
 
     private void FollowPlayer()
@@ -42,6 +56,7 @@ public class ChaseCam : MonoBehaviour
 
             transform.Translate(direction * distanceToMove, Space.World);
 
+            // Z 축 고정 (카메라 깊이 설정)
             transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
         }
     }

@@ -20,23 +20,27 @@ public class Beam : Skill
         {
             yield return new WaitUntil(() => isFiring);
             yield return new WaitUntil(() => SeekClosestEnemy() != null);
-            
 
-            Transform closestEnemy = SeekClosestEnemy();
-            if (closestEnemy != null)
-            {
-                Vector2 directionToEnemy = (closestEnemy.position - transform.position).normalized;
+            FireProjectileAtClosestEnemy();
 
-                activeBeam = Instantiate(Resources.Load<BeamProjectile>("BeamProjectile"), transform.position, Quaternion.identity);
-                activeBeam.Initialize(directionToEnemy, transform);
-                activeBeam.transform.up = directionToEnemy;
-                activeBeam.duration = 0.5f;
-            }
             yield return new WaitForSeconds(fireRate);
         }
     }
 
     protected override void FireProjectileAtClosestEnemy()
     {
+        Transform closestEnemy = SeekClosestEnemy();
+        if (closestEnemy != null)
+        {
+            Vector2 directionToEnemy = 
+                (closestEnemy.position - transform.position).normalized;
+
+            activeBeam = 
+                Instantiate(Resources.Load<BeamProjectile>("BeamProjectile"),
+                transform.position, Quaternion.identity);
+            activeBeam.Initialize(directionToEnemy, transform);
+            activeBeam.transform.up = directionToEnemy;
+            activeBeam.duration = 0.5f;
+        }
     }
 }

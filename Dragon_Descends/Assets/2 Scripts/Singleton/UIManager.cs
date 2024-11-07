@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using Unity.VisualScripting;
+using Random = UnityEngine.Random;
 
 public class UIManager : SingletonManager<UIManager>
 {
@@ -52,12 +53,15 @@ public class UIManager : SingletonManager<UIManager>
 
     private void TikClock()
     {
-        Timer = GameManager.Instance.timeSinceStart;
+        if(CharacterManager.Instance.player.p_isAlive)
+        {
+            Timer = GameManager.Instance.timeSinceStart;
 
-        int minute = (int)(Timer / 60);
-        int second = (int)(Timer % 60);
+            int minute = (int)(Timer / 60);
+            int second = (int)(Timer % 60);
 
-        Timetext.text = $"{minute:D2} : {second:D2}";
+            Timetext.text = $"{minute:D2} : {second:D2}";
+        }
     }
 
     private void GamePauseResume()
@@ -85,13 +89,16 @@ public class UIManager : SingletonManager<UIManager>
         {
             gameOverPanel.messageText.text = "Game Clear!!!!!";
         }
+        int minute = (int)(Timer / 60);
+        int second = (int)(Timer % 60);
+
+        gameOverPanel.TimeText.text = $"¼Ò¿ä ½Ã°£ \n {minute:D2} : {second:D2}";
         gameOverPanel.gameObject.SetActive(isGameOver);
         Time.timeScale = isGameOver ? 0f : 1.0f;
     }
 
     public void GameSkillLevelUpPauseResume()
     {
-        if (CharacterManager.Instance.player.IsMaxLv) return;
 
         isLevelUp = !isLevelUp;
         levelUpPanel.gameObject.SetActive(isLevelUp);
@@ -110,12 +117,12 @@ public class UIManager : SingletonManager<UIManager>
             return new Tuple<int, int>(SkillIndexList[0], -1);
         }
 
-        int index1 = UnityEngine.Random.Range(0, SkillIndexList.Count);
+        int index1 = Random.Range(0, SkillIndexList.Count);
         int index2;
 
         do
         {
-            index2 = UnityEngine.Random.Range(0, SkillIndexList.Count);
+            index2 = Random.Range(0, SkillIndexList.Count);
         }
         while (index1 == index2);
 
@@ -213,15 +220,15 @@ public class UIManager : SingletonManager<UIManager>
     }
     private void OnClickBomber()
     {
-        print("ÆøÅº" + isPaused);
-
         Player p = CharacterManager.Instance.player;
         SelectedSkills[p.level - 1].sprite = SkillSpriteList[1];
         Color color = SelectedSkills[p.level - 1].color;
         color.a = 1.0f;
         SelectedSkills[p.level - 1].color = color;
 
-        BodyPart newBody = Instantiate(Resources.Load<BodyPart>("Body"), p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
+        BodyPart newBody = 
+            Instantiate(Resources.Load<BodyPart>("Body"), 
+            p.parts[p.parts.Count - 1].transform.position, Quaternion.identity);
 
         newBody.prevBodyPart = p.parts[p.parts.Count - 1].gameObject;
 
@@ -295,6 +302,8 @@ public class UIManager : SingletonManager<UIManager>
 
     public void OnGameReStart()
     {
+        GameManager.Instance.timeSinceStart = 0f;
+
         for (int i = CharacterManager.Instance.enemies.Count - 1; i >= 0; --i)
         {
             GameObject enemy = CharacterManager.Instance.enemies[i].gameObject;

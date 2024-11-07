@@ -9,4 +9,6 @@ public class GameOverPanel : MonoBehaviour
     public Button reStartButton;
     public Button quitButton;
     public TMP_Text messageText;
+    public TMP_Text TimeText;
+
 }
