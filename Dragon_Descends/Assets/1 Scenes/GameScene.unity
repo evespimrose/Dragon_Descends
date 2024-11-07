@@ -2174,6 +2174,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e466e94a05de041839f1dcaea1d5dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minX: -450
+  maxX: 450
+  minY: -180
+  maxY: 180
 --- !u!1 &591074901
 GameObject:
   m_ObjectHideFlags: 0
@@ -4748,7 +4752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6459e11627abd584da8933907fec0f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 1
   hp: 1
   damage: 1
   fireRate: 0
