@@ -1,35 +1,24 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class ChaseCam : MonoBehaviour
 {
-    public Transform playerTransform; // ÇÃ·¹ÀÌ¾îÀÇ TransformÀ» ÇÒ´ç
-    public float followDelay = 0.5f;  // ÇÃ·¹ÀÌ¾î ÀÌµ¿ ½ÃÀÛ ÈÄ µû¶ó°¡±â Áö¿¬ ½Ã°£
-    public float boundaryRadius = 1.5f; // ÇÃ·¹ÀÌ¾î·ÎºÎÅÍ ¹þ¾î³ªÁö ¾Êµµ·Ï ÇÒ ¹üÀ§ ¹Ý°æ
-    public float followSpeed = 5f;    // Ä«¸Þ¶ó°¡ µû¶ó°¡´Â ¼Óµµ
+    public Transform playerTransform; // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ Transformï¿½ï¿½ ï¿½Ò´ï¿½
+    public float followDelay = 0.5f;  // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ó°¡±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    public float boundaryRadius = 1.5f; // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½
+    public float followSpeed = 5f;    // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ó°¡´ï¿½ ï¿½Óµï¿½
 
     private bool startFollowing = false;
-    private bool isCheckingMovement = false; // ÀÌµ¿ »óÅÂ °Ë»ç ¿©ºÎ
 
     private void Start()
     {
         followSpeed = CharacterManager.Instance.player.moveSpeed;
+        StartCoroutine(StartFollowingAfterDelay());
     }
 
     private void Update()
     {
         followSpeed = CharacterManager.Instance.player.moveSpeed;
-
-        // ÇÃ·¹ÀÌ¾îÀÇ ÀÌµ¿ÀÌ ½ÃÀÛµÇ¾ú´ÂÁö È®ÀÎ
-        if ((Vector2)CharacterManager.Instance.transform.position != CharacterManager.Instance.player.Target)
-        {
-            if (!isCheckingMovement)
-            {
-                isCheckingMovement = true;
-                StartCoroutine(StartFollowingAfterDelay()); // ÀÌµ¿ ½ÃÀÛ ÈÄ µô·¹ÀÌ Àû¿ë
-            }
-        }
-
         if (startFollowing)
         {
             FollowPlayer();
@@ -38,11 +27,8 @@ public class ChaseCam : MonoBehaviour
 
     private IEnumerator StartFollowingAfterDelay()
     {
-        startFollowing = false; // ÀÏ´Ü µû¶ó°¡±â ÁßÁö
-        yield return new WaitForSeconds(followDelay); // µô·¹ÀÌ Àû¿ë
-
-        startFollowing = true; // µô·¹ÀÌ ÈÄ µû¶ó°¡±â ½ÃÀÛ
-        isCheckingMovement = false; // ÀÌµ¿ »óÅÂ Àç°Ë»ç Çã¿ë
+        yield return new WaitForSeconds(followDelay);
+        startFollowing = true;
     }
 
     private void FollowPlayer()
@@ -56,7 +42,6 @@ public class ChaseCam : MonoBehaviour
 
             transform.Translate(direction * distanceToMove, Space.World);
 
-            // Z Ãà °íÁ¤ (Ä«¸Þ¶ó ±íÀÌ ¼³Á¤)
             transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
         }
     }
