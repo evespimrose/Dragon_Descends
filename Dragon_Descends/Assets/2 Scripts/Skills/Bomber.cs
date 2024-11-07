@@ -7,7 +7,6 @@ public class Bomber : Skill
 
     protected override IEnumerator AutoFire()
     {
-        fireRate = 0.769f;
         isFiring = true;
         while (isFiring)
         {

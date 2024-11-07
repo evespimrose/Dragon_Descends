@@ -8,14 +8,13 @@ public class Beam : Skill
 
     protected override void Start()
     {
-        
+        fireRate = 7f;
         StartCoroutine(CannonAim());
         StartCoroutine(AutoFire());
     }
 
     protected override IEnumerator AutoFire()
     {
-        fireRate = 0.909f;
         isFiring = true;
         while (isFiring)
         {
@@ -31,7 +30,7 @@ public class Beam : Skill
                 activeBeam = Instantiate(Resources.Load<BeamProjectile>("BeamProjectile"), transform.position, Quaternion.identity);
                 activeBeam.Initialize(directionToEnemy, transform);
                 activeBeam.transform.up = directionToEnemy;
-                activeBeam.duration = 0.5f;
+                activeBeam.duration = 3f;
             }
             yield return new WaitForSeconds(fireRate);
         }
