@@ -258,6 +258,7 @@ public class Player : MonoBehaviour
             if (part.TryGetComponent<Skill>(out Skill skill))
             {
                 skill.isFiring = false;
+                skill.StopFire();
             }
         }
 
@@ -300,7 +301,9 @@ public class Player : MonoBehaviour
 
         if (parts[0].TryGetComponent<Skill>(out Skill skill))
         {
+            print("다시 발사");
             skill.isFiring = true;
+            skill.StartFire();
         }
 
         Collider2D collider = GetComponent<Collider2D>();

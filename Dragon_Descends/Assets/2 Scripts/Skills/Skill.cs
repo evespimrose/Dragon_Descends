@@ -20,10 +20,28 @@ public class Skill : MonoBehaviour
     private float detectionRadius = 12.9f;
 
     public float Offset = -0.7f;
+
+    private Coroutine firecoroutine;
     protected virtual void Start()
     {
+        StartFire(AutoFire());
         StartCoroutine(CannonAim());
-        StartCoroutine(AutoFire());
+        
+    }
+
+    public virtual void StopFire()
+    {
+        StopCoroutine(firecoroutine);
+    }
+
+    public virtual void StartFire(IEnumerator c)
+    {
+        firecoroutine = StartCoroutine(c);
+    }
+
+    public virtual void StartFire()
+    {
+        firecoroutine = StartCoroutine(AutoFire());
     }
 
     protected virtual IEnumerator AutoFire()
