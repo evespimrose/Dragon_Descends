@@ -9,7 +9,7 @@ public class Beam : Skill
     protected override void Start()
     {
         StartCoroutine(CannonAim());
-        StartCoroutine(AutoFire());
+        StartFire(AutoFire());
     }
 
     protected override IEnumerator AutoFire()
